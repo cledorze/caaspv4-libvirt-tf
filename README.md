@@ -27,22 +27,22 @@ Wait for "Apply complete!"
 
 ## Load balancer (workaround regarding LB IP resolution fail)
 7) add the LB IP/hostame manually to each k8s node + hypervisor
-10.50.1.0 ISVnamelb-0.ISVnameisv-lab.net
+10.X0.1.0 ISVnamelb-0.ISVnameisv-lab.net
 
 ## Init, bootstrap and add nodes to your k8s cluster
 8) skuba cluster init --control-plane FQDN-LB0 ISVname (eg : skuba cluster init --control-plane artifactorylb-0.artifactoryisv-lab.net artifactory)
 9) cd ISVname
-10) eval `ssh-agent -s`
+10) eval \`ssh-agent -s\`
 11) ssh-add
 12) skuba node bootstrap --user sles --sudo --target 10.50.2.0 artifactorymaster-0.artifactoryisv-lab.net -v 4
 13) You could start geting cluster infos : 
         - export KUBECONFIG=/CaaSP4/ISV/JFrog/Artifactory/caaspv4-libvirt-tf/artifactory/admin.conf
         - watch kubectl get nodes 
 14) Add all nodes :
-skuba node join --role master --user sles --sudo --target 10.50.2.1 artifactorymaster-1.artifactoryisv-lab.net -v 4
-skuba node join --role master --user sles --sudo --target 10.50.2.2 artifactorymaster-2.artifactoryisv-lab.net -v 4
-skuba node join --role worker --user sles --sudo --target 10.50.3.0 artifactoryworker-0.artifactoryisv-lab.net -v 4
-skuba node join --role worker --user sles --sudo --target 10.50.3.1 artifactoryworker-1.artifactoryisv-lab.net -v 4
+skuba node join --role master --user sles --sudo --target 10.X0.2.1 isvmaster-1.isv-lab.net -v 4
+skuba node join --role master --user sles --sudo --target 10.X0.2.2 isvmaster-2.isv-lab.net -v 4
+skuba node join --role worker --user sles --sudo --target 10.X0.3.0 isvworker-0.isv-lab.net -v 4
+skuba node join --role worker --user sles --sudo --target 10.X0.3.1 isvworker-1.isv-lab.net -v 4
 
 ## LAB : Setup Helm/tiller + NFS SC
 15) On the host ISV's directory :
