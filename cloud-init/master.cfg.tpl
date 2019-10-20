@@ -41,7 +41,7 @@ runcmd:
   - [ systemctl, enable, --now, --no-block, haproxy ]
 ${register_scc}
   - [ SUSEConnect, -p, caasp/4.0/x86_64, -r, INTERNAL-USE-ONLY-e62a127779ce75cc ]
-  - [ zypper, in, --force-resolution, --no-confirm, --force, podman, kernel-default ]
+  - [ zypper, in, --force-resolution, --no-confirm, --force, podman, cri-o, kernel-default ]
   - [ reboot ]
 
 bootcmd:
