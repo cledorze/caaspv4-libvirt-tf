@@ -2,8 +2,10 @@ Deploy a CaaSPv4 Cluster
 ************************
 
 ## Base image
-1) DL the base image either from IBS or existing ISV repo : SLES15-SP1-JeOS.x86_64-15.1-OpenStack-Cloud-GMC3.qcow2
-2) Place this image in the root of this repo.
+1) DL the base image either from IBS or existing ISV repo : 
+http://download.suse.de/install/SLE-15-SP1-JeOS-GM/SLES15-SP1-JeOS.x86_64-15.1-OpenStack-Cloud-GM.qcow2
+
+2) Place this image in the root of this repo. (SLES15-SP1-JeOS.x86_64-15.1-OpenStack-Cloud-GMC3.qcow2)
 
 ## Init and Apply
 3) Inside the root of the directory do a : terraform init (verify that you have terraform-libvirt provider installed)
