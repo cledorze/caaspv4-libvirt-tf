@@ -110,7 +110,7 @@ variable "network" {
 
 variable "authorized_keys" {
   type        = "list"
-  default     = []
+  default     = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCvbaSjWaahntI3QRFcNuHzvykn5J//eZEfwhB3uSCqroUyompB0gORKEkrOoEhl3tFkZUIvdoEv4Nx5vHYnntpHvzQR3zV01kB/0pIGnAyNE+DMy8qKtL++VzPF1CaPU0BJRZjR49h78Ed2C7MuMaKTnQGR4rsS9zxn8Lspld+L2ZWTacfQiAU878p23ADKMgfkETTiAR0EgEmaN0oHIjFJrCxvz6eZe9GoBHKNlj7PKm/+hxsuP+O4+xu97kB71zdFgKSV7GnI059ggH7rlpjaYgibvOXWoMAEosC9GPjRJMH54cDQaKagarSazrkfeS5x7VyHzZJS84GOmvs2Wf root@nodea"]
   description = "ssh keys to inject into all the nodes"
 }
 
@@ -135,7 +135,7 @@ variable "packages" {
 }
 
 variable "username" {
-  default     = "opensuse"
+  default     = "sles"
   description = "Username for the cluster nodes"
 }
 
