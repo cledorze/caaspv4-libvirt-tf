@@ -13,6 +13,26 @@ resource "libvirt_volume" "img" {
   pool   = "${var.pool}"
 }
 
+##############################
+# Configure the DNS Provider #
+##############################
+
+provider "dns" {
+  update {
+    server        = "10.10.10.11"
+    key_name      = "isv-lab.net."
+    key_algorithm = "hmac-md5"
+    key_secret    = "kDcnxEodcQHr/2sYVloQ9ZCvjB6+76FShItaDdwnHNh/16lGq+pCo2exiIDJKpILAkGG9KZGubdgECvD6zYqzw=="
+  }
+}
+
+# Create a DNS A record set
+#resource "dns_a_record_set" "www" {
+  # ...
+  
+#}
+
+
 ##############
 # Networking #
 ##############
@@ -21,7 +41,7 @@ resource "libvirt_network" "network" {
   mode      = "${var.net_mode}"
   domain    = "${var.name_prefix}${var.domain_name}"
   addresses = ["${var.network}"]
-  dns = {  forwarders { address = "8.8.8.8" } }
+  dns = {  forwarders { address = "10.10.10.11" } }
 }
 
 ################
