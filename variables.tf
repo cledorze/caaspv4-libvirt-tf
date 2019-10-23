@@ -110,11 +110,7 @@ variable "network" {
 
 variable "authorized_keys" {
   type        = "list"
-<<<<<<< HEAD
   default     = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCvbaSjWaahntI3QRFcNuHzvykn5J//eZEfwhB3uSCqroUyompB0gORKEkrOoEhl3tFkZUIvdoEv4Nx5vHYnntpHvzQR3zV01kB/0pIGnAyNE+DMy8qKtL++VzPF1CaPU0BJRZjR49h78Ed2C7MuMaKTnQGR4rsS9zxn8Lspld+L2ZWTacfQiAU878p23ADKMgfkETTiAR0EgEmaN0oHIjFJrCxvz6eZe9GoBHKNlj7PKm/+hxsuP+O4+xu97kB71zdFgKSV7GnI059ggH7rlpjaYgibvOXWoMAEosC9GPjRJMH54cDQaKagarSazrkfeS5x7VyHzZJS84GOmvs2Wf root@nodea"]
-=======
-  default     = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4D05euky5v2WN4W4HONcdgAuJG3hJ2dMKPPr5zDFnn7rgKeh2ZdMRBpXs+KI4/vVgUxridHK/YN71FqNL4HrL1wp+ceY3ueirP5/eyCyOLF1LGISmFf6EoxsYpg52JniIhlct6X4kXe4lVykype21idex44dFZe2T8iNyitMEHEAk0n7YkMFc0QSwMR5MJmaNMJ5W44OT1Ne/efJ/n37rcTu1APo9Ewlktd2z2xL/TTyMLOTuToCv8WtBCl+pq7RIscNmvf4J1eAQTw7FIx1l/mlduJTmXlSO90w8Ejwhc21e7lNcZ6LaBjw/zlJWaiq/lTDR/krE6OGUT9VAwI/P tofix@tofixs-MBP"]
->>>>>>> fdb1b90bc7e528bf8738eddbf190d42828679ce7
   description = "ssh keys to inject into all the nodes"
 }
 
