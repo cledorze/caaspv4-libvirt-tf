@@ -1,11 +1,12 @@
 Deploy a CaaSPv4 Cluster 
 ************************
 
-
+```
 git clone https://github.com/cledorze/caaspv4-libvirt-tf
 mkdir ./your-isv-name
 cd ./your-isv-name
 cp -ax ../caaspv4-libvirt-tf/* ./
+````
 
 ## Base image
 1) DL the base image either from IBS or existing ISV repo : 
