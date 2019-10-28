@@ -1,5 +1,5 @@
-Deploy a CaaSPv4 Cluster 
-************************
+## Deploy a CaaSPv4 Cluster 
+***###*********************
 
 ```
 git clone https://github.com/cledorze/caaspv4-libvirt-tf
@@ -30,7 +30,10 @@ variable "network" {
   description = "Network used by the cluster"
   
 5) Edit terraform.tfvars and adapt the number of workers/masters if needed.
-6) terraform apply 
+6) ```
+   terraform init
+   terraform apply
+   ``` 
 
 Wait for "Apply complete!" 
 
