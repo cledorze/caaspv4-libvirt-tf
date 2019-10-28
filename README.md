@@ -1,5 +1,4 @@
-## Deploy a CaaSPv4 Cluster 
-***###*********************
+# Deploy a CaaSPv4 Cluster 
 
 ```
 git clone https://github.com/cledorze/caaspv4-libvirt-tf
