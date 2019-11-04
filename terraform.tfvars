@@ -26,16 +26,6 @@ username = "sles"
 # Image url - can be local file downloaded in advance
 img_source_url = "SLES15-SP1-JeOS.x86_64-15.1-OpenStack-Cloud-GMC3.qcow2"
 
-# Define the repositories to use.
-repositories = [
-#  { sle_server    = "http://download.suse.de/install/SLP/SLE-15-SP1-Module-Server-Applications-RC2/x86_64/DVD1/"},
-#  { sle_base      = "http://download.suse.de/install/SLP/SLE-15-SP1-Module-Basesystem-RC2/x86_64/DVD1/"},
-#  { sle_contaiers = "http://download.suse.de/install/SLP/SLE-15-SP1-Module-Containers-RC2/x86_64/DVD1/"},
-#  { sle_ha        = "http://download.suse.de/install/SLP/SLE-15-SP1-Product-HA-RC1/x86_64/DVD1/"},
-#  { suse_ca       = "http://download.suse.de/ibs/SUSE:/CA/SLE_15_SP1/" },
-#  { caasp_15sp1   = "http://download.suse.de/ibs/SUSE:/SLE-15-SP1:/Update:/Products:/CASP40/standard/" }
-]
-
 # Additional packages that you may want to install in the initialization process.
 packages = [
 ]
@@ -45,6 +35,5 @@ packages = [
 authorized_keys = [
 "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCvbaSjWaahntI3QRFcNuHzvykn5J//eZEfwhB3uSCqroUyompB0gORKEkrOoEhl3tFkZUIvdoEv4Nx5vHYnntpHvzQR3zV01kB/0pIGnAyNE+DMy8qKtL++VzPF1CaPU0BJRZjR49h78Ed2C7MuMaKTnQGR4rsS9zxn8Lspld+L2ZWTacfQiAU878p23ADKMgfkETTiAR0EgEmaN0oHIjFJrCxvz6eZe9GoBHKNlj7PKm/+hxsuP+O4+xu97kB71zdFgKSV7GnI059ggH7rlpjaYgibvOXWoMAEosC9GPjRJMH54cDQaKagarSazrkfeS5x7VyHzZJS84GOmvs2Wf root@nodea"
 ]
-
 caasp_registry_code = "INTERNAL-USE-ONLY-5f03b309b9b3a613"
-ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"] 
+#ntp_servers = ["0.novell.pool.ntp.org", "1.novell.pool.ntp.org", "2.novell.pool.ntp.org", "3.novell.pool.ntp.org"]
