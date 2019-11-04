@@ -18,18 +18,18 @@ variable "pool" {
 
 ## fixme: see issue https://github.com/SUSE/avant-garde/issues/91
 variable "img_source_url" {
-  type    = "string"
-  default = "https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.0/images/openSUSE-Leap-15.0-OpenStack.x86_64-0.0.4-Buildlp150.12.136.qcow2"
+#  type    = string
+  default = "SLES15-SP1-JeOS.x86_64-15.1-OpenStack-Cloud-GMC3.qcow2"
 }
 
 variable "repositories" {
-  type = "list"
-
-  default = [
-    {
-      caasp_devel_leap15 = "https://download.opensuse.org/repositories/devel:/CaaSP:/Head:/ControllerNode/openSUSE_Leap_15.0"
-    },
-  ]
+#  type = string
+  default = "https://download.opensuse.org/repositories/devel:/CaaSP:/Head:/ControllerNode/openSUSE_Leap_15.0"
+#  default = [
+#    {
+#      caasp_devel_leap15 = "https://download.opensuse.org/repositories/devel:/CaaSP:/Head:/ControllerNode/openSUSE_Leap_15.0"
+#    },
+#  ]
 
   description = "Urls of the repositories to mount via cloud-init"
 }
@@ -85,37 +85,37 @@ variable "worker_vcpu" {
 }
 
 variable "name_prefix" {
-  type        = "string"
-  default     = "rancher"
+#  type        = string
+  default     = "sapdh27"
   description = "Optional prefix to be able to have multiple clusters on one host"
 }
 
 variable "domain_name" {
-  type        = "string"
-  default     = "isv-lab.net"
+#  type        = string
+  default     = "suse-sap.net"
   description = "The domain name"
 }
 
 variable "net_mode" {
-  type        = "string"
+#  type        = string
   default     = "nat"
   description = "Network mode used by the cluster"
 }
 
 variable "network" {
-  type        = "string"
-  default     = "10.100.0.0/22"
+#  type        = string
+  default     = "10.110.0.0/22"
   description = "Network used by the cluster"
 }
 
 variable "authorized_keys" {
-  type        = "list"
+#  type        = list(string)
   default     = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCvbaSjWaahntI3QRFcNuHzvykn5J//eZEfwhB3uSCqroUyompB0gORKEkrOoEhl3tFkZUIvdoEv4Nx5vHYnntpHvzQR3zV01kB/0pIGnAyNE+DMy8qKtL++VzPF1CaPU0BJRZjR49h78Ed2C7MuMaKTnQGR4rsS9zxn8Lspld+L2ZWTacfQiAU878p23ADKMgfkETTiAR0EgEmaN0oHIjFJrCxvz6eZe9GoBHKNlj7PKm/+hxsuP+O4+xu97kB71zdFgKSV7GnI059ggH7rlpjaYgibvOXWoMAEosC9GPjRJMH54cDQaKagarSazrkfeS5x7VyHzZJS84GOmvs2Wf root@nodea"]
   description = "ssh keys to inject into all the nodes"
 }
 
 variable "packages" {
-  type = "list"
+#  type = list(string)
 
   default = [
     "kubernetes-kubeadm",
@@ -128,7 +128,6 @@ variable "packages" {
     "-containerd",
     "-docker-runc",
     "-docker-libnetwork",
-    
   ]
 
   description = "list of additional packages to install"
