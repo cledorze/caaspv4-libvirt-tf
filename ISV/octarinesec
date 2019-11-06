@@ -1,0 +1,21 @@
+suse-password
+curl  https://cli.octarinesec.com/0.11.2/install.sh | sh
+
+octactl config docker.email
+export PATH=$PATH:/home/cledorze/go/bin:/usr/lib64/go/1.11/contrib/:/home/cledorze/CaaSP4/octarine/ISV-validation/
+octactl config docker.email dockerhub@octarinesec.com
+octactl config docker.username octarineseuser
+octactl config docker.password OctarineSecUser
+octactl login admin@suse eu-112.octarinesec.com
+octactl deployment create caaspv4:octarinesec-cluster  allow
+
+export KUBECONFIG=/home/cledorze/CaaSP4/octarine/octarinesec-cluster/admin.conf
+
+octactl dataplane install  octarine-dataplane caaspv4:octarinesec-cluster | kubectl apply
+kubectl get pods  octarine-dataplane
+watch kubectl get pods  octarine-dataplane
+curl https://assets.octarinesec.com/bookinfo.yaml > /tmp/bookinfo.yaml
+
+kubectl create namespace bookinfo
+kubectl apply  ./bookinfo.yaml  bookinfo
+watch kubectl get pods  bookinfo
