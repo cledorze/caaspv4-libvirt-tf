@@ -1,0 +1,180 @@
+Strategy w MBuitrago
+
+Why
+* Strategy using OBS to target certains type of tech partners
+
+What
+* Build : not only for DevOps but for every kind of build (rpms, bin, vm, isos, disk images etc…)
+* Publish : Repositories
+
+How 
+    
+
+
+https://en.opensuse.org/openSUSE:Build_Service_Tutorial#Step_Two.C2.A0.E2.80.93_Create_.26_Upload_packages
+
+https://confluence.suse.com/display/applications/OBS+Structure
+
+https://fr.opensuse.org/openSUSE:Comment_contribuer_%C3%A0_Leap
+
+https://confluence.suse.com/display/SUSECaaSPlatform4/General+Info+for+Newbie?preview=%2F171376652%2F271352477%2FSUSE_Factory+First+Policy.pdf
+
+
+https://news.opensuse.org/2018/05/25/based-on-enterprise-code-tested-millions-of-times-opensuse-leap-15-released/
+
+
+https://yastgithubio.readthedocs.io/en/latest/architecture/
+
+https://openbuildservice.org/help/manuals/obs-reference-guide/cha.obs.admin.html
+
+
+ 
+
+Packages list with their origin :
+https://build.opensuse.org/package/view_file/openSUSE:Leap:15.1/00Meta/lookup.yml?expand=1
+
+
+
+
+
+
+
+
+How the sources and different versions are organized in OBS
+Legend
+
+
+OBS
+openSUSE Build Service at  build.opensuse.org
+IBS
+Internal Build Service at  build.suse.de
+osc
+Build Service command-line tool
+
+
+The openSUSE build service command-line tool (osc) is used in several examples in this document. However, when working with the IBS (Internal Build Service) an additional parameter is required so osc knows what location to look in, otherwise it defaults to OBS (openSUSE Build Service).
+Throught this guide, the following alias is assumed:
+alias isc='osc -A https://api.suse.de'
+Repos
+
+GraphViz has crashed
+Development happens at Devel:Desktop:Mozilla:SLE-X, where X is the SLE-Version.
+Naming convention
+Full names tend to be very long, therefore we generally shorten the name tokens to first letters when unambiguous.
+Devel:Desktop:Mozilla:SLE-11-SP3:next → DDM:SLE-11-SP3:n or DDM:11.3:n → DDM:n  if version is clear from context
+SUSE:SLE-11-SP3:Update → SS:11.3:U → SSU  if version is clear from context
+*:current
+
+Where the development of the current ESR-version happens.
+Individual packagers should branch from these projects to their home. That allows for
+1. better synchronisation among several people working on updates
+2. reviewing the submit in a neutral territory (when there is time for it)
+
+As of time of writing this SLE-12 (naming it SLE-12-SP0 would actually be more consistent, but would prevent easy scripting of mass maintenance requests) is the newest code stream. Once we arrive at the situation where SLE12 SPx will differ from SP0 due to:
+1. additional packages being needed to build and/or run Firefox on SLE 12 SPx, and
+2. there will be a newer SP released that will contain (at least some of) these packages
+we will create Devel:Desktop:Mozilla:SLE-12-SPx:current, move the SLE-12-SP0 packages there and use D:D:M:c for the latest SP of the latest SLE again.
+*:next
+
+These are intended as a common place to put work or reasonably self-contained WIP on the next ESR release.
+Since the ESR have 3 months (2 cycles) overlap, it is possible (and desirable) to have the next ESR release ready before the current one is EOLed. Given that Beta releases are (supposed to be) rather stable, we should aim at working on the Beta builds as soon as they are available, which is roughly 4.5 months (18 weeks) before the EOL of the current ESR version.
+Before the Beta is tagged, it may be a good idea to build Nightly (mozilla-central). On the other hand, given the speed of development the need to have these builds at any cost is probably not justifiable. Thus we'll probably try to do it "from time to time".
+*:next → *:current
+
+When the time comes to actually release these next ESR versions, we will want to copy the sources locally from :n to :c and submit as usually. This a rare case when working directly on the :c packages (and not via another proxy branch in one's home project) may be reasonable (that doesn't mean the proxy method is bad).
+LTSS (old codestreams)
+
+For old codestreams that are out of LTSS, the updates may be (and often are) requested via L3 incidents. Since we are packaging it anyway it usually doesn't hurt too much to prepare the packages for these old versions right away so that L3 can pick them up without too much hassle. For SLE-10-SP3 I usually do the submits to S:S-10-SP3:U:T for newer codestreams this remains to be agreed upon with security/maintenance. We can certainly have the updates ready in D:D:M:*:c, question is whether to push it into S:S*:U or not.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Intro
+
+
+OBS is the open [SUSE] build service. The instructions in this guide are identical for the public and internal instances (OBS, IBS respectively).
+You can interact with the build service via the web or the command line program `osc`. This guide focuses primarily on command line setup, basic usage, and package creation.
+Build servers
+
+  OBS: https://build.opensuse.org  
+  IBS: https://build.suse.de 
+
+Initialization
+
+1. Log in to the desired server in the browser.
+2. Initialize your home project by clicking "Home project" on the upper right corner of the page (not the top banner).
+3. Install osc.
+    1. zypper in -y osc
+4. Initialize osc as your user (generate required config file, supply username and password).
+    1. osc init
+5. Configure more osc options. This is optional but recommended because might get sick of typing your password  all the time, and you can control where build results end up. Example settings to look for:
+    1. 
+  Store password:
+    Option 1. Enter your password in your settings file. ocs will tell you where this is on your system but it is probably: /home/USER/.config/osc/oscrc
+    Option 2. Uncomment keyring=1 in this file and store your credentials in your OS keyring.
+  Build root:
+    ctrl-f build-root   (and create the directory if it doesn't already exist. Make sure the user you are building as has permissions to write here.
+    WARNING this location will be chrooted per the documentation. Choose your directory wisely. 
+  Sudo:
+    Uncomment `su-wrapper = sudo` as a convenience
+6. Create your project directory 
+    1. Do NOT use the same directory or a subdirectory of your build root per the osc warning. It will be obliterated eventually.
+7. Check out your home project to test osc connection.
+    1. 
+ cd /home/proj/root && osc co home:YOURNAME
+
+Creating a new package
+
+1. Log in to the desired server in the browser.
+2. Create package in browser. Fill out name, title, and description.
+3. Add at least one repository to it in the browser. Tumbleweed is a good one to start with, if creating an RPM.
+    1. osc co home:yourname <packagename> 
+4. Navigate to the project directory and put your project files there, if any.
+    1. cd home:yourname <packagename>
+5. open a new file named package.spec; osc will auto generate a spec file template for you if using vim, not sure about other editors.
+6. Create a changelog. Perform this step on package creation and every time the rpm release number increases.
+    1. osc vc
+7. Build it
+    1. osc build --clean
+
+Contributing to an existing project
+
+
+1. If you have not already, start with Initialization section
+2. Via the browser, select a package and branch it to your home space
+3. Before doing anything try a build
+4. After making changes to files update the changelog
+    1. osc vc
+5. Once satisfied with changes submit to server
+    1. osc commit
+6. Follow the release management guideline to get your package in the right place
