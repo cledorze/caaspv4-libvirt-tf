@@ -1,0 +1,43 @@
+Portus DR
+=== Secure Private Registry
+To statisfy DataHub requirements you also need a Docker Registry. The easiest way to build and manage it comes with the project Portus. http://port.us.org
+First you need to create a dedicated server for your Docekr registry and Portus stack.
+# sudo virt-install --name portus-dr --ram 8192 --disk path=/var/lib/libvirt/VMS/portus-dr.qcow2,size=40 --vcpus 4 --os-type linux --os- variant generic --network bridge=common --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/isos/SLE-12-SP4-Server-DVD- x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=10.10.10.11/24,10.10.10.1,10.10.10.11,suse-sap.net hostname=portus-dr domain=suse-sap.net Textmode=1'
+In our example this server will be connected to another local bridge which provides common services (DNS, SMT, Docker-registry) for the Datahub stack.
+Our Portus deployment will be based on Container, and orchestrated locally with docker- compose.
+Portus deocker-compose deployment requires an up-to-date release of docker-compose.
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker- compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+Now you could simply clone the Portus repository, adapt the .env and the nginx configuration to your naming convention.
+# git clone https://github.com/SUSE/Portus.git /tmp/Portus-DR # mv /tmp/Portus-DR/examples/compose ./portus
+# cd portus
+Now you could edit both .env and nginx/nginx.conf. This is how our configuration looks like :
+# cat .env
+MACHINE_FQDN=portus-dr.suse-sap.net SECRET_KEY_BASE=b494a25faa8d22e430e843e220e424e10ac84d2ce0e64231f5b63 6d21251eb6d267adb042ad5884cbff0f3891bcf911bdf8abb3ce719849ccda9a4889249e5 c2
+PORTUS_PASSWORD=XXXXXXXX
+       
+DATABASE_PASSWORD=YYYYYYYY
+In the nginx/nginx.conf file, you should now adapt the following section :
+server {
+listen 443 ssl http2;
+server_name portus-dr.suse-sap.net; root /srv/Portus/public;
+Now, you could pull the latest docker-compose.yml.
+rm docker-compose.*
+wget https://gist.githubusercontent.com/Patazerty/d05652294d5874eddf192c9b633751ee/ raw/6bf4ac6ba14192a1fe5c337494ab213200dd076e/docker-compose.yml
+To avoid dealing with Docker insecure registry configuration we'll add SSL to our setup.
+echo "subjectAltName = DNS:portus-dr.suse-sap.net" > extfile.cnf openssl genrsa -out secrets/rootca.key 2048
+openssl req -x509 -new -nodes -key secrets/rootca.key -subj "/C=FR/ST=FR/O=SUSE" -sha256 -days 1024 -out secrets/rootca.crt openssl genrsa -out secrets/portus.key 2048
+openssl req -new -key secrets/portus.key -out secrets/portus.csr -subj "/C=FR/ST=FR/O=SUSE/CN
+openssl req -new -key secrets/portus.key -out secrets/portus.csr -subj "/C=FR/ST=FR/O=SUSE/CN=portus-dr.suse-sap.net"
+openssl x509 -req -in secrets/portus.csr -CA secrets/rootca.crt -extfile extfile.cnf - CAkey secrets/rootca.key -CAcreateserial -out secrets/portus.crt -days 500 -sha256
+Now all we have to do is to make the servers aware of this certificate
+cp -p secrets/rootca.crt /etc/pki/trust/anchors/.net-ca.crt
+scp secrets/rootca.crt root@jumpbox.suse-sap.net:/etc/pki/trust/anchors/portus- dr.suse-sap.net-ca.crt
+Then on all servers that will needs to interact with the docker-registry :
+sudo update-ca-certificates sudo systemctl restart docker
+It's time now to start your Portus setup.
+docker-compose up -d
+        
+You could now log on Portus and set the registry.
+ 
