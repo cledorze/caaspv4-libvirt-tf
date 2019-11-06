@@ -1,0 +1,75 @@
+export AWS_SECRET_ACCESS_KEY=AKIAZUHJFEC2IYBSJ7RF
+export AWS_ACCESS_KEY_ID=rhacj1TbHt4E4bhEgvmCu1UayWaK8OqxxXwcAhKA
+
+
+Need : 
+    - python-openssl
+    - mysql-client
+    - python-setuptools
+
+git clone git@github.com:cycloidio/ansible-cycloid-onprem.git
+mkdir cycloid-onprem
+cd cycloid-onprem
+cp -r ../ansible-cycloid-onprem/playbooks/* .
+
+virtualenv --clear .env
+source .env/bin/activate
+pip install molecule ansible==2.8.* docker-py passlib bcrypt
+mkdir keys
+ssh-keygen -t rsa -b 2048 -N '' -f keys/id_rsa
+ansible-galaxy install -r requirements.yml --roles-path=roles -v
+echo -e "[cycloid]\n1.2.3.4" > inventory
+export CYCLOID_ENV=prod
+
+cat >> environments/${CYCLOID_ENV}-cycloid.yml <<EOF
+# Resolvable domain name from the instance and externally to use Cycloid console.
+cycloid_console_dns: console.mydomain.org
+# Initial Cycloid user
+cycloid_initial_user:
+  username: "admin"
+  email: "disabled@no-email.cycloid"
+  password: "Ch4ngm3pls"
+  given_name: admin
+  family_name: cycloid
+# Pipeline engine, server configuration.
+concourse_session_signing_key: "{{lookup('file', 'keys/id_rsa')}}"
+concourse_host_key: "{{lookup('file', 'keys/id_rsa')}}"
+concourse_authorized_worker_keys:
+  - "{{lookup('file', 'keys/id_rsa.pub')}}"
+EOF
+
+ansible-playbook -e env=${CYCLOID_ENV} -u admin -b -i inventory playbook.yml
+
+Cycloid worker installation
+echo -e "[cycloid-worker]\n4.3.2.1" >> inventory
+ansible-galaxy install -r worker-requirement.yml --roles-path=roles -v --force
+export SCHEDULER_API_ADDRESS=1.2.3.4
+export VERSION=$(curl -sL "${SCHEDULER_API_ADDRESS}:8080/api/v1/info" | jq -r '.version')
+
+Configure Ansible playbook for Cycloid workers
+cat >> environments/${CYCLOID_ENV}-cycloid.yml <<EOF
+# Cycloid workers section
+concourse_worker: yes
+concourse_worker_name: "\$(hostname)"
+concourse_service_enabled: no
+concourse_worker_options: |
+  --ephemeral \\
+  --garden-network-pool 10.254.0.0/16 \\
+  --garden-max-containers 1024 \\
+  --garden-log-level=error \\
+  --baggageclaim-log-level=error \\
+  --garden-assets-dir={{ concourse_work_dir }}/garden_assets/ \\
+  --garden-depot={{ concourse_work_dir }}/garden_depot \\
+  --baggageclaim-volumes={{ concourse_work_dir }}/baggageclaim_volumes \\
+  --baggageclaim-driver=overlay 2>&1 | tee -a /var/log/concourse-worker.log ; exit \${PIPESTATUS[0]}
+concourse_install_dir: /var/lib/concourse
+concourse_work_dir: /var/lib/concourse/datas
+concourse_version: "${VERSION}"
+concourse_tsa_port: "2222"
+concourse_tsa_host: "$SCHEDULER_API_ADDRESS"
+concourse_tsa_public_key: "{{lookup('file', 'keys/id_rsa.pub')}}"
+concourse_tsa_worker_key: "{{lookup('file', 'keys/id_rsa')}}"
+EOF
+
+ansible-playbook -e env=${CYCLOID_ENV} -u admin -b -i inventory worker.yml
+
