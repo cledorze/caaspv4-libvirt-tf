@@ -1,0 +1,61 @@
+Helm/tiller
+*************
+wget https://raw.githubusercontent.com/helm/helm/master/scripts/get
+sh get
+helm init
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}’
+
+SSL Gen
+***********
+mkdir secrets
+echo "subjectAltName = DNS:artifactory.isv-lab.net" > extfile.cnf
+openssl genrsa -out secrets/rootca.key 2048
+openssl req -x509 -new -nodes -key secrets/rootca.key -subj "/C=FR/ST=FR/O=SUSE" -sha256 -days 1024 -out secrets/rootca.crt
+openssl genrsa -out secrets/artifactory.key 2048
+openssl req -new -key secrets/artifactory.key -out secrets/artifactory.csr -subj "/C=FR/ST=FR/O=SUSE/CN=artifactory.isv-lab.net"
+openssl x509 -req -in secrets/artifactory.csr -CA secrets/rootca.crt -extfile extfile.cnf -CAkey secrets/rootca.key -CAcreateserial -out secrets/artifactory.crt -days 500 -sha256
+
+NFS SC
+**********
+helm install stable/nfs-client-provisioner --set nfs.server=10.10.10.11 --set nfs.path=/srv/nfs1
+kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}’
+double check if nfs-client is installed on each nodes
+
+Metallb
+********
+create a config.yml file with :
+_____________
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+      - name: my-ip-space
+        protocol: layer2
+        addresses:
+          - 10.200.3.10-10.200.3.20
+_____________
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+kubectl create -f ./config.yml
+#to test => kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/tutorial-2.yaml
+
+Artifactory JCR
+*******************
+helm repo add jcr-helm https://solengha.jfrog.io/solengha/jcr-helm --username suse --password "e[6Q?t^e"
+helm repo update
+kubectl create secret docker-registry regsecret --docker-server=solengha-artifactory-docker-private.jfrog.io --docker-username=suse --docker-password="e[6Q?t^e" --docker-email=empty@jfrog.com
+
+kubectl create secret tls artifactory-tls --cert=./secrets/artifactory.crt --key=secrets/artifactory.key
+helm install --name jfrog-container-registry --set artifactory.imagePullSecrets=regsecret --set artifactory.nginx.tlsSecretName=artifactory-tls jcr-helm/jfrog-container-registry --devel
+
+
+On the servers who needs to access repositories on Artifactory
+*********************************************************************
+cp secrets/* /etc/ca-certificates/update.d/
+update-ca-certificates 
+systemctl restart docker
