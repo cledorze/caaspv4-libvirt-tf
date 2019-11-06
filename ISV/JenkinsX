@@ -1,0 +1,99 @@
+utnodeb:/CaaSP4/ISV/JenkinsX/jenkinsx # jx install
+? Select Jenkins installation type: Serverless Jenkins X Pipelines with Tekton
+Context "kubernetes-admin@jenkinsx" modified.
+? Cloud Provider kubernetes
+Git configured for user: cledorze and email christophe.ledorze@suse.com
+Helm installed and configured
+? No existing ingress controller found in the kube-system namespace, installing one: Yes
+
+Waiting for external loadbalancer to be created and update the nginx-ingress-controller service in kube-system namespace
+External loadbalancer created
+Waiting to find the external host name of the ingress controller Service in namespace kube-system with name jxing-nginx-ingress-controller
+If you are installing Jenkins X on premise you may want to use the '--on-premise' flag or specify the '--external-ip' flags. See: https://jenkins-x.io/getting-started/install-on-cluster/#installing-jenkins-x-on-premise
+You can now configure a wildcard DNS pointing to the new Load Balancer address 10.140.3.10
+If you don't have a wildcard DNS setup then create a DNS (A) record and point it at: 10.140.3.10, then use the DNS domain in the next input...
+
+If you do not have a custom domain setup yet, Ingress rules will be set for magic DNS nip.io.
+Once you have a custom domain ready, you can update with the command jx upgrade ingress --cluster
+? Domain jenkinsx.jenkinsx.isv-lab.net
+nginx ingress controller installed and configured
+Set up a Git username and API token to be able to perform CI/CD
+Creating a local Git user for GitHub server
+? GitHub username: cledorze
+To be able to create a repository on GitHub we need an API Token
+Please click this URL and generate a token
+https://github.com/settings/tokens/new?scopes=repo,read:user,read:org,user:email,write:repo_hook,delete_repo
+
+Then COPY the token and enter it below:
+
+? API Token: ****************************************
+Select the CI/CD pipelines Git server and user
+? Do you wish to use GitHub as the pipelines Git server: Yes
+Creating a pipelines Git user for GitHub server
+To be able to create a repository on GitHub we need an API Token
+Please click this URL and generate a token
+https://github.com/settings/tokens/new?scopes=repo,read:user,read:org,user:email,write:repo_hook,delete_repo
+
+Then COPY the token and enter it below:
+
+? API Token: ****************************************
+Setting the pipelines Git server https://github.com and user name cledorze.
+Enumerating objects: 1440, done.
+Total 1440 (delta 0), reused 0 (delta 0), pack-reused 1440
+Setting up prow config into namespace jx
+Installing tekton into namespace jx
+
+Installing Prow into namespace jx
+with values file /root/.jx/cloud-environments/env-kubernetes/myvalues.yaml
+
+? Defaulting workload build pack: Kubernetes Workloads: Automated CI+CD with GitOps Promotion
+Setting the team build pack to kubernetes-workloads repo: https://github.com/jenkins-x-buildpacks/jenkins-x-kubernetes.git ref: master
+Installing jx into namespace jx
+Installing jenkins-x-platform version: 2.0.1542
+
+
+WARNING: waiting for install to be ready, if this is the first time then it will take a while to download images
+Jenkins X deployments ready in namespace jx
+Configuring the TeamSettings for ImportMode YAML
+Creating default staging and production environments
+? Select the organization where you want to create the environment repository:  [Use arrows to move, space to select, type to ? Select the organization where you want to create the environment repository:  [Use arrows to move, space to select, type to ? Select the organization where you want to create the environment repository: cledorze
+Using Git provider GitHub at https://github.com
+? Using Git user name: cledorze
+? Using organisation: cledorze
+Creating repository cledorze/environment-mousehickory-staging
+Creating Git repository cledorze/environment-mousehickory-staging
+Pushed Git repository to https://github.com/cledorze/environment-mousehickory-staging
+
+Creating staging Environment in namespace jx
+Created environment staging
+Namespace jx-staging created
+Creating GitHub webhook for cledorze/environment-mousehickory-staging for url http://hook.jx.jenkinsx.jenkinsx.isv-lab.net/hook
+Using Git provider GitHub at https://github.com
+? Using Git user name: cledorze
+? Using organisation: cledorze
+Creating repository cledorze/environment-mousehickory-production
+Creating Git repository cledorze/environment-mousehickory-production
+Pushed Git repository to https://github.com/cledorze/environment-mousehickory-production
+
+Creating production Environment in namespace jx
+Created environment production
+Namespace jx-production created
+Creating GitHub webhook for cledorze/environment-mousehickory-production for url http://hook.jx.jenkinsx.jenkinsx.isv-lab.net/hook
+
+Jenkins X installation completed successfully
+
+
+    ********************************************************
+
+         NOTE: Your admin password is: izy6ZbA8d-ZMre3g8tZ#
+
+    ********************************************************
+
+
+Your Kubernetes context is now set to the namespace: jx
+To switch back to your original namespace use: jx namespace jx
+Or to use this context/namespace in just one terminal use: jx shell
+For help on switching contexts see: https://jenkins-x.io/developing/kube-context/
+To import existing projects into Jenkins:       jx import
+To create a new Spring Boot microservice:       jx create spring -d web -d actuator
+To create a new microservice from a quickstart: jx create quickstart
