@@ -1,0 +1,20 @@
+https://next.nutanix.com/blog-40/nutanix-releases-new-kubernetes-csi-based-driver-30941
+
+https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/
+
+
+We have a request from the field to validate and document the use of Pure Storage as a storage component (CSI)of CaaSP.   Therefore we need to consider what requirements and validations we would need to demonstrate that a storage solution meets the needs of the K8S infrastructure for CaaSP. We also need to build a repeatable test script to duplicate these tests with other partners. I have outlined some questions below that we should answer/consider as the requirements
+ 
+YES Ready
+Interfaces (NFS, iSCSI, FCoE, etc)
+Storage Type (Block, File, Object)
+I/O performance Based on Documentation: https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/hardware.md#disks: 
+500 sequential IOPS
+Write Performance: 10MB/s
+Does performance change for Persistent / Ephemeral?
+Redundancy / Failure / Recovery
+API server binary and kubelet binaries:
+* --allow-privileged=true
+* Most CSI plugins will require bidirectional mount propagation, which can only be enabled for privileged pods. Privileged pods are only permitted on clusters where this flag has been set to true (this is the default in some environments like GCE, GKE, and kubeadm).
+
+https://susedoc.github.io/doc-caasp/beta/caasp-deployment/single-html/#_storage_performance
