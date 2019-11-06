@@ -1,0 +1,178 @@
+Factorsupply 
+
+Deployment 
+****************
+Deployment infra => Calm
+Calm sait faire du state ?
+MongoDB 5 nodes 
+
+Service
+**********
+Acces services / Broker 
+Peut on se servir de Calm pour trigger la création de services de CF ?
+idem mini-broker (pas scalable) 
+Postgresql Redis MariaDB MongoDB 
+
+
+SAP migration HANA ?
+
+
+Ou alors séparément 
+
+First of all check how Karbon has been deployed and note the master(s) IP(s) : 
+
+https://github.com/SUSE/scf/blob/3706a3ffed072f74834d0329f115f4215184b5d8/bin/dev/kube-ready-state-check.sh
+
+Master : 10.16.37.83
+
+
+Shared ? ou readwriteonce 
+
+
+
+
+[nutanix@karbon-isv-suse-8e3de4-k8s-master-0 ~]$ sh ./kube-ready-state-check.sh
+Testing all
+Verified: swap should be accounted
+Configuration problem detected: docker info should not show aufs
+Verified: authenticate with kubernetes cluster
+Verified: all kube-dns pods should be running (show N/N ready)
+Verified: all tiller pods should be running (N/N ready)
+Verified: An ntp daemon or systemd-timesyncd must be installed and active
+Verified: A storage class should exist in K8s
+Verified: Privileged must be enabled in 'kube-apiserver'
+Verified: Privileged must be enabled in 'kubelet'
+containerd.service not available
+
+Connect to the Lab 
+
+Citrix VDI
+https://nrlab.nutanix.com/logon/LogonPoint/index.html
+susecaas
+NTNXsuse123!
+
+Prism
+https://10.16.0.217:9440/console/#login
+susecaas@nutanixbd.local
+NTNXsuse123!
+
+Karbon (k8s)
+https://10.16.0.217:7050/login
+susecaas@nutanixbd.local
+NTNXsuse123!
+API : 10.16.37.83
+
+Domain
+*.suseisv.nutanixbd.local
+
+Jumpbox (NFS Server / Helm & Kubectl client) 
+ssh 10.16.37.103
+ export KUBECONFIG=/home/admin/isv-suse-kubectl.cfg
+
+Step1 
+Setup env
+
+Helm/tiller
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+
+NFS Server 
+ chown admin:users /srv/nfs1/
+cat  /etc/exports
+/srv/nfs1       *(rw,no_root_squash,sync,no_subtree_check,insecure)
+
+NFS Client
+ helm install stable/nfs-client-provisioner --set nfs.server=10.16.37.103 --set nfs.path=/srv/nfs1
+
+Change default SC
+admin    
+Test SC 
+admin@linux-0zry:~/CAP> cat ./test-storage-class.yaml
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+ name: test-sc-persistent
+spec:
+ accessModes:
+   - ReadWriteOnce
+ resources:
+   requests:
+     storage: 1Gi
+
+
+Step2
+Deployment 
+
+UAA
+helm install
+
+
+ cat ./scf-config-values.yaml
+env:
+ # Enter the domain you created for your CAP cluster
+ DOMAIN: suseisv.nutanixbd.local
+ UAA_HOST: uaa.suseisv.nutanixbd.local
+ UAA_PORT: 2793
+kube:
+ external_ips: ["10.16.37.89", "10.16.37.94"]
+ storage_class:
+     persistent: "nfs-client"
+     shared: "shared"
+ psp:
+         #nonprivileged: ~
+   privileged: ~
+ # The registry the images will be fetched from.
+ # The values below should work for
+ # a default installation from the SUSE registry.
+ registry:
+  hostname: "registry.suse.com"
+  username: ""
+  password: ""
+  organization: "cap"
+secrets:
+ # Create a very strong password for user 'admin'
+ CLUSTER_ADMIN_PASSWORD: linux
+
+ # Create a very strong password, and protect it because it
+ # provides root access to everything
+ UAA_ADMIN_CLIENT_SECRET: linux
+
+Monitor UAA deployment : 
+ watch -c 'kubectl get pods --namespace uaa’
+
+SCF
+ SECRET=$(kubectl get pods --namespace uaa 
+-o jsonpath='{.items[?(.metadata.name=="uaa-0")].spec.containers[?(.name=="uaa")].env[?
+(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+
+ CA_CERT="$(kubectl get secret $SECRET --namespace uaa \
+-o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)”
+
+ helm install suse/cf \
+--name susecf-scf \
+--namespace scf \
+--values scf-config-values.yaml \
+--set "secrets.UAA_CA_CERT=${CA_CERT}”
+
+Monitor SCF deployment : 
+ watch -c 'kubectl get pods --namespace scf’
+
+
+Stratos UI
+
+ helm install suse/console --name susecf-console --namespace stratos --values scf-config-values.yaml
+
+Monitor Stratos Deployment 
+ watch -c 'kubectl get pods --namespace stratos’
+
+
+Clean/Uninstall 
+
+ helm del --purge susecf-console
+kubectl delete namespace stratos
+helm del --purge susecf-scf
+kubectl delete namespace scf
+helm del --purge susecf-uaa
+kubectl delete namespace uaa
