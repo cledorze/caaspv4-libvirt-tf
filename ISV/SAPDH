@@ -1,0 +1,93 @@
+Virsh install Admin node
+
+<network>
+  <name>intra</name>
+  <uuid>d70dc874-bc2a-4d85-b61a-c23c90725821</uuid>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name=‘caasp3' stp='on' delay='0'/>
+  <mac address='52:54:00:06:a1:a1'/>
+  <domain name=’suse-sap.net'/>
+  <ip address='10.20.10.254' netmask='255.255.255.0'>
+  </ip>
+</network>
+
+sudo virt-install --name caasp3-velum --ram 8192 --disk path=/var/lib/libvirt/VMS/caasp3-velum.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=10.18.10.100/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-velum domain=suse-sap.net Textmode=1'
+
+INTERNAL-USE-ONLY-e62a127779ce75cc 0.us.pool.ntp.org
+
+sudo virt-install --name caasp3-master --ram 16384 --disk path=/var/lib/libvirt/VMS/caasp3-master.qcow2,size=40 --vcpus 2 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast=http://10.10.10.154/autoyast ifcfg=eth0=10.18.10.120/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-master domain=suse-sap.net Textmode=1'
+
+sudo virt-install --name caasp3-worker0 --ram 16384 --disk path=/var/lib/libvirt/VMS/caasp3-worker0.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast=http://10.10.10.154/autoyast ifcfg=eth0=10.18.10.130/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-worker0 domain=suse-sap.net Textmode=1'
+
+sudo virt-install --name caasp3-worker1 --ram 16384 --disk path=/var/lib/libvirt/VMS/caasp3-worker1.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast=http://10.10.10.154/autoyast ifcfg=eth0=10.18.10.131/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-worker1 domain=suse-sap.net Textmode=1'
+
+sudo virt-install --name caasp3-worker2 --ram 16384 --disk path=/var/lib/libvirt/VMS/caasp3-worker2.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast=http://10.10.10.154/autoyast ifcfg=eth0=10.18.10.132/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-worker2 domain=suse-sap.net Textmode=1'
+sudo virt-install --name caasp3-worker3 --ram 16384 --disk path=/var/lib/libvirt/VMS/caasp3-worker3.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SUSE-CaaS-Platform-3.0-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast=http://10.10.10.154/autoyast ifcfg=eth0=10.18.10.133/24,10.18.10.1,10.10.10.11,suse-sap.net hostname=caasp3-worker3 domain=suse-sap.net Textmode=1'
+
+
+
+
+<network>
+  <name>ses5</name>
+  <uuid>d70dc874-bc2a-4d85-b61a-c23c90725820</uuid>
+  <forward mode='nat'/>
+  <bridge name='virbr2' stp='on' delay='0'/>
+  <mac address='52:54:00:06:a1:a1'/>
+  <domain name='isvlab.net'/>
+  <ip address='10.19.10.254' netmask='255.255.255.0'>
+  </ip>
+</network>
+
+sudo virt-install --name ses5-admin --ram 8192 --disk path=/var/lib/libvirt/VMS/ses5-admin.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network network=ses5 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=10.19.10.100/24,10.19.10.1,10.10.10.11,isvlab.net hostname=ses5-admin domain=isvlab.net Textmode=1'
+
+INTERNAL-USE-ONLY-e62a127779ce75cc 0.us.pool.ntp.org
+
+
+
+RMT
+sudo virt-install --name rmt --ram 8192 --disk bus=virtio,path=/var/lib/libvirt/VMS/rmt.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/rmt-mirror.qcow2,size=200  --vcpus 4 --os-type linux --os-variant generic --network bridge=br1 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-15-SP1-Installer-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=10.10.10.2/24,10.10.10.254,10.10.10.11,isvlab.net hostname=rmt domain=isvlab.net Textmode=1'
+
+
+New
+sudo virt-install —name cycloid --ram 32768 --disk bus=virtio,path=/var/lib/libvirt/VMS/cycloid.qcow2,size=100  --vcpus 4 --os-type linux --os-variant generic --network bridge=br1 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-15-SP1-Installer-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=20.20.20.10/24,20.20.20.1,20.20.20.1,isvlab.net hostname=cycloid domain=isvlab.net Textmode=1'
+
+
+SES5.5
+sudo virt-install --name ses5-admin --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd3.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd4.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd5.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd6.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-admin-osd7.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network network=ses5 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.70.10.100/24,10.70.10.254,10.10.10.11,isvlab.net hostname=ses5-admin domain=isvlab.net Textmode=1'
+
+sudo virt-install --name ses5-osd0 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd3.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd4.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd5.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd6.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd0-osd7.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network network=ses5 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.70.10.101/24,10.70.10.254,10.10.10.11,isvlab.net hostname=ses5-osd0 domain=isvlab.net Textmode=1'
+sudo virt-install --name ses5-osd1 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd3.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd4.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd5.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd6.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd1-osd7.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network network=ses5 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.70.10.102/24,10.70.10.254,10.10.10.11,isvlab.net hostname=ses5-osd1 domain=isvlab.net Textmode=1'
+sudo virt-install --name ses5-osd2 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd3.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd4.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd5.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd6.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses5-osd2-osd7.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network network=ses5 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.70.10.103/24,10.70.10.254,10.10.10.11,isvlab.net hostname=ses5-osd2 domain=isvlab.net Textmode=1'
+<network>
+  <name>intra</name>
+  <uuid>d70dc874-bc2a-4d85-b61a-c23c90725821</uuid>
+  <forward mode='nat'/>
+  <bridge name='virbr3' stp='on' delay='0'/>
+  <mac address='52:54:00:06:a1:a1'/>
+  <domain name='isvlab.net'/>
+  <ip address='10.20.10.254' netmask='255.255.255.0'>
+  </ip>
+</network>
+sudo virt-install --name jumpbox-n4 --ram 8192 --disk path=/var/lib/libvirt/VMS/jumpbox-n4.qcow2,size=40 --vcpus 4 --os-type linux --os-variant generic --network network=intra --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/isos/SLE-12-SP4-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial ifcfg=eth0=10.20.10.100/24,10.20.10.1,10.20.10.11,isvlab.net hostname=jumpbox-n4 domain=isvlab.net Textmode=1'
+
+
+
+
+
+SES55
+
+INTERNAL-USE-ONLY-5f03b309b9b3a613
+INTERNAL-USE-ONLY-5f87-c2a0
+
+
+sudo virt-install --name ses55-admin --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd3.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.18.10.200/24,10.18.10.1,10.10.10.11,suse-sap.net domain=suse-sap.net Textmode=1'
+sudo virt-install --name ses55-osd0 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd0.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd0-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd0-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd0-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd0-osd3.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.18.10.230/24,10.18.10.1,10.10.10.11,suse-sap.net domain=suse-sap.net Textmode=1'
+sudo virt-install --name ses55-osd1 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd1.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd1-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd1-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd1-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd1-osd3.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.18.10.231/24,10.18.10.1,10.10.10.11,suse-sap.net domain=suse-sap.net Textmode=1'
+sudo virt-install --name ses55-osd2 --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd2.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd2-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd2-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd2-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-osd2-osd3.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --graphics none --console pty,target_type=serial --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'console=ttyS0,115200n8 serial autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.18.10.232/24,10.18.10.1,10.10.10.11,suse-sap.net domain=suse-sap.net Textmode=1'
+
+X
+sudo virt-install --name ses55-admin --ram 16384 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin.qcow2,size=40 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd0.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd1.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd2.qcow2,size=20 --disk bus=virtio,path=/var/lib/libvirt/VMS/ses55-admin-osd3.qcow2,size=20 --vcpus 4 --os-type linux --os-variant generic --network bridge=caasp3 --network network=ses5-intra --location '/var/lib/libvirt/ISOS/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso' --extra-args 'autoyast-ses5=http://10.10.10.101/autoyast-ses5 ifcfg=eth0=10.18.10.200/24,10.18.10.1,10.10.10.11,suse-sap.net ifcfg=eth1=10.100.10.1/24,10.100.10.1,10.10.10.11,suse-sap.net domain=suse-sap.net'
