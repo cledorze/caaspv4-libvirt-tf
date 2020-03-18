@@ -260,7 +260,7 @@ data "template_file" "worker_cloud_init_user_data" {
 }
 
 resource "libvirt_cloudinit_disk" "worker" {
-  # needed when 0 worker nodes are defined
+  # needed when 0  worker nodes are defined
   count = var.worker_count
   name  = "${var.name_prefix}worker_cloud_init_${count.index}.iso"
   pool  = var.pool
