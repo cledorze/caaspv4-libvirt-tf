@@ -81,7 +81,7 @@ export PATH=$PATH:/root/CaaSP4/helm/linux-amd64/
 ```
 kubectl apply -f ./ISV/tiller-rbac.yaml
 ```
-17) Init Helm
+17) Init Helm 
 ```
 helm init --service-account tiller
 ```
